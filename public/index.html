@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Mikrotik Carel list</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 30px;
+    }
+    h2 {
+      margin-bottom: 10px;
+    }
+    #ipInput {
+      padding: 6px;
+      width: 180px;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+    #buttons {
+      display: flex;
+      gap: 60px;
+      margin-bottom: 5px;
+    }
+    button {
+      padding: 6px 14px;
+      cursor: pointer;
+    }
+    #result {
+      margin-top: 0px;
+      font-weight: bold;
+    }
+    #listContainer {
+      margin-top: 5px;
+      text-align: center;
+      width: 195px;
+    }
+    #listOutput {
+      width: 99%;
+      height: 300px;
+      border: 1px solid #ccc;
+      padding: 0px;
+      overflow-y: auto;
+      white-space: pre-line;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+    #refreshWrapper {
+      display: flex;
+      justify-content: flex-end;
+      width: 100%;
+    }
+    #refreshBtn {
+      padding: 6px 14px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h2>Mikrotik Carel list.</h2>
+
+  <input type="text" id="ipInput" placeholder="Enter IP address" />
+
+  <div id="buttons">
+    <button onclick="addIP()">Add</button>
+    <button onclick="removeIP()">Remove</button>
+  </div>
+
+  <div id="result"></div>
+
+  <div id="listContainer">
+    <div id="listOutput">List is empty</div>
+    <div id="refreshWrapper">
+      <button id="refreshBtn" onclick="refreshList()">Refresh</button>
+    </div>
+  </div>
+
+  <script>
+    async function addIP() {
+      const ip = document.getElementById("ipInput").value;
+      if (!ip) return alert("Enter IP");
+      const res = await fetch(`/add?ip=${ip}`);
+      const text = await res.text();
+      document.getElementById("result").innerText = text;
+      refreshList(); // автообновление
+    }
+
+    async function removeIP() {
+      const ip = document.getElementById("ipInput").value;
+      if (!ip) return alert("Enter IP");
+      const res = await fetch(`/remove?ip=${ip}`);
+      const text = await res.text();
+      document.getElementById("result").innerText = text;
+      refreshList(); // автообновление
+    }
+
+    async function refreshList() {
+      try {
+        const res = await fetch("/list");
+        const data = await res.json();
+        const list = data.list;
+        if (list.length === 0) {
+          document.getElementById("listOutput").innerText = "List is empty";
+        } else {
+          document.getElementById("listOutput").innerText = list.join("\n");
+        }
+      } catch (err) {
+        document.getElementById("listOutput").innerText = "Error loading list";
+        console.error(err);
+      }
+    }
+  </script>
+</body>
+</html>
