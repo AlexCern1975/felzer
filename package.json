@@ -1,0 +1,15 @@
+{
+  "name": "ros-carel-web",
+  "version": "1.0.0",
+  "description": "Web UI for Mikrotik Carel address-list management",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "body-parser": "^1.20.2",
+    "node-routeros": "1.5.1"
+  }
+}
